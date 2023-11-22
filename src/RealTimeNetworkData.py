@@ -3,12 +3,12 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import matplotlib.pyplot as plt
 
-class DonnéesRéseau:
+class RealTimeNetworkData:
     def __init__(self):
         self.url = "https://tso.nbpower.com/Public/fr/SystemInformation_realtime.asp"
         self.data = None
 
-    def fetch_data(self):
+    def get_data(self):
         response = requests.get(self.url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
@@ -42,6 +42,6 @@ class DonnéesRéseau:
             print("No data to display.")
 
 # Utilisation de la classe
-donnees = DonnéesRéseau()
-donnees.fetch_data()
+donnees = RealTimeNetworkData()
+donnees.get_data()
 donnees.process_and_display_data()

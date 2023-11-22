@@ -4,22 +4,21 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import sys
 
-class ArchivesDonnéesRéseau:
+class ArchivedNetworkData:
 
     def __init__(self):
         """
-        Constructeur de la classe ArchivesDonnéesRéseau
-        Classe permettant de récupérer les données du réseau de la page https://tso.nbpower.com/Public/fr/system_information_archive.aspx
+        ArchivedNetworkData constructor
         """
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         self.url: str = "https://tso.nbpower.com/Public/fr/system_information_archive.aspx"
 
-    def get_archived_data(self, month, year, file_name):
+    def get_data(self, month, year, file_name):
         """
-        Méthode permettant de récupérer les données du réseau pour un mois et une année donnés
-        @param month: le mois
-        @param year: l'année
-        @param file_name: le nom du fichier dans lequel écrire les données
+        Get archived data from the website
+        @param month: the month
+        @param year: the year
+        @param file_name: the file name
         """
         try:
             self.driver.get("https://tso.nbpower.com/Public/fr/system_information_archive.aspx")
@@ -35,8 +34,9 @@ class ArchivesDonnéesRéseau:
 
             self.driver.quit()
         except Exception as e:
+            print("An error occurred while retrieving the data from ArchivedNetworkData .")
             print(e)
             sys.exit(1)
 
-archive = ArchivesDonnéesRéseau()
-archive.get_archived_data(8, 2023, 'fichier.csv')
+archive = ArchivedNetworkData()
+archive.get_data(8, 2023, 'fichier.csv')
