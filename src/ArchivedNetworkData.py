@@ -58,8 +58,6 @@ class ArchivedNetworkData:
             self.driver.get("https://tso.nbpower.com/Public/fr/system_information_archive.aspx")
 
             self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlMonth').send_keys(str(month))
-            # if self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlMonth').get_attribute('value') != str(month):
-            #     self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlMonth').send_keys(str(month))
             self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlYear').send_keys(str(year))
             self.driver.find_element(By.ID, 'ctl00_cphMainContent_lbGetData').click()
 
