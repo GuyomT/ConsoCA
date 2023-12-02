@@ -4,9 +4,13 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import sys
 import os
+import time
 import pandas as pd
 import matplotlib.pyplot as plt
 from io import StringIO
+from InitDatabase import EnergyData, engine
+from sqlalchemy.orm import sessionmaker
+
 class ArchivedNetworkData:
 
     def __init__(self):
@@ -15,7 +19,7 @@ class ArchivedNetworkData:
         """
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         self.url: str = "https://tso.nbpower.com/Public/fr/system_information_archive.aspx"
-        self.all_data = {}
+        self.Session = sessionmaker(bind=engine)
 
     def get_max_year(self):
         """
@@ -54,6 +58,8 @@ class ArchivedNetworkData:
             self.driver.get("https://tso.nbpower.com/Public/fr/system_information_archive.aspx")
 
             self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlMonth').send_keys(str(month))
+            # if self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlMonth').get_attribute('value') != str(month):
+            #     self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlMonth').send_keys(str(month))
             self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlYear').send_keys(str(year))
             self.driver.find_element(By.ID, 'ctl00_cphMainContent_lbGetData').click()
 
@@ -70,6 +76,20 @@ class ArchivedNetworkData:
             print(e)
             return pd.DataFrame()
 
+    def is_data_present_in_database(self, year):
+        """
+        Check if data for a specific year is already present in the database.
+        """
+        session = self.Session()
+        try:
+            result = session.query(EnergyData.heure).filter(EnergyData.heure.between(f'{year}-01-01', f'{year}-12-31')).first()
+            return result is not None
+        except Exception as e:
+            print(f"Database query error: {e}")
+            return False
+        finally:
+            session.close()
+
     def get_all_data(self):
         """
         Get all archived data from the website and store it in a dictionary of DataFrames.
@@ -77,31 +97,26 @@ class ArchivedNetworkData:
         try:
             min_year = self.get_min_year()
             max_year = self.get_max_year()
-            ## TODO: Don't look for data that are alraedy in the Database
             for year in range(min_year, max_year + 1):
+                if os.path.exists(f'archive_{year}.csv'):
+                    print(f"Data for year {year} already exists in csv. Skipping.")
+                    continue
                 yearly_data = pd.DataFrame()
                 for month in range(1, 13):
                     print(f"Getting data for {month}/{year}")
                     monthly_data = self.get_data_as_df(month, year)
                     if not monthly_data.empty:
                         yearly_data = pd.concat([yearly_data, monthly_data])
-
+                    time.sleep(0.1)
                 if not yearly_data.empty:
-                    self.all_data[year] = yearly_data
+                    filename = f'archive_{year}.csv'
+                    yearly_data.to_csv(filename, index=False)
                     print(f"Aggregated data for year {year}")
+                    print(f"Saved data for year {year} in {filename}")
 
         except Exception as e:
             print("An error occurred while retrieving the data from ArchivedNetworkData")
             print(e)
-
-    def save_yearly_data_to_csv(self):
-        """
-        Save the data for each year to a separate CSV file.
-        """
-        for year, data in self.all_data.items():
-            file_name = f'archive_{year}.csv'
-            data.to_csv(file_name, index=False)
-            print(f"Saved data for year {year} in {file_name}")
 
     def quit_driver(self):
         """
@@ -109,21 +124,41 @@ class ArchivedNetworkData:
         """
         self.driver.quit()
 
-    def plot_data_from_csv(self, start_year, end_year, month, data_column):
+    def insert_data_into_database(self):
         """
-        Plots data from CSV files for a specific month across multiple years.
+        Insert data from CSV files into the MySQL database.
+        """
+        session = self.Session()
+        try:
+            for year in range(self.get_min_year(), self.get_max_year() + 1):
+                file_name = f'archive_{year}.csv'
+                if os.path.exists(file_name):
+                    data_df = pd.read_csv(file_name, parse_dates=['HEURE'])
+                    data_df.dropna(inplace=True)
 
-        @param start_year: The starting year of the data
-        @param end_year: The ending year of the data
-        @param month: The month for which to plot the data
-        @param data_column: The name of the column containing the data to plot
-        """
-        plt.figure(figsize=(10, 6))
-        month_dict = {1: 'JANVIER', 2: 'FÉVRIER', 3: 'MARS', 4: 'AVRIL', 5: 'MAI', 6: 'JUIN', 7: 'JUILLET', 8: 'AOÛT',
-                        9: 'SEPTEMBRE', 10: 'OCTOBRE', 11: 'NOVEMBRE', 12: 'DÉCEMBRE'}
+                    for _, row in data_df.iterrows():
+                        if not session.query(EnergyData).filter_by(heure=row['HEURE']).first():
+                            record = EnergyData(
+                                heure=row['HEURE'],
+                                charge_au_nb=row['CHARGE_AU_NB'],
+                                demande_au_nb=row['DEMANDE_AU_NB'],
+                                iso_ne=row['ISO_NE'],
+                                nmisa=row['NMISA'],
+                                quebec=row['QUEBEC'],
+                                nouvelle_ecosse=row['NOUVELLE_ECOSSE'],
+                                ipe=row['IPE']
+                            )
+                            session.add(record)
+            session.commit()
+            print("Data from CSV files inserted into the database successfully.")
+        except Exception as e:
+            session.rollback()
+            print(f"An error occurred: {e}")
+        finally:
+            session.close()
 
 
 archive = ArchivedNetworkData()
 archive.get_all_data()
-archive.save_yearly_data_to_csv()
+archive.insert_data_into_database()
 archive.quit_driver()

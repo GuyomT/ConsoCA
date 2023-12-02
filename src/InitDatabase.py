@@ -8,7 +8,7 @@ Base = declarative_base()
 class EnergyData(Base):
     __tablename__ = 'energy_data'
     id = Column(Integer, primary_key=True)
-    heure = Column(DateTime)
+    heure = Column(DateTime, unique=True)
     charge_au_nb = Column(Float)
     demande_au_nb = Column(Float)
     iso_ne = Column(Integer)
@@ -17,6 +17,5 @@ class EnergyData(Base):
     nouvelle_ecosse = Column(Float)
     ipe = Column(Float)
 
-# Replace 'your_username', 'your_password', 'localhost', 'mydatabase' with your MySQL credentials
-engine = create_engine('mysql+pymysql://your_username:your_password@localhost/mydatabase')
+engine = create_engine('mysql+pymysql://guyomt:_3Ldar1on;;;@localhost/consoca')
 Base.metadata.create_all(engine)
