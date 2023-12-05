@@ -156,7 +156,7 @@ class ArchivedNetworkData:
             session.close()
 
 
-archive = ArchivedNetworkData()
-archive.get_all_data()
-archive.insert_data_into_database()
-archive.quit_driver()
+# archive = ArchivedNetworkData()
+# archive.get_all_data()
+# archive.insert_data_into_database()
+# archive.quit_driver()
