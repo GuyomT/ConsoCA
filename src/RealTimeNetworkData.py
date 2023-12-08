@@ -25,7 +25,6 @@ class RealTimeNetworkData:
             values = [td.get_text().strip() for td in rows[5].find_all('td')]
 
             self.data = dict(zip(titles, values))
-            print(self.data)
         else:
             print("Failed to retrieve the webpage. Status code:", response.status_code)
 
@@ -49,7 +48,7 @@ class RealTimeNetworkData:
             )
             session.add(record)
             session.commit()
-            print("Real-time data inserted into the database successfully.")
+            print("Real-time data inserted into the database successfully at ", clean_now)
         except Exception as e:
             session.rollback()
             print(f"An error occurred: {e}")

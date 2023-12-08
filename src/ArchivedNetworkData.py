@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from io import StringIO
 from InitDatabase import EnergyData, engine
 from sqlalchemy.orm import sessionmaker
+from selenium.webdriver.chrome.options import Options
 
 class ArchivedNetworkData:
 
@@ -18,6 +19,10 @@ class ArchivedNetworkData:
         ArchivedNetworkData constructor
         """
         self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        options = Options()
+        options.add_argument('--headless')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--log-level=3')
         self.url: str = "https://tso.nbpower.com/Public/fr/system_information_archive.aspx"
         self.Session = sessionmaker(bind=engine)
 
@@ -62,7 +67,6 @@ class ArchivedNetworkData:
             self.driver.find_element(By.ID, 'ctl00_cphMainContent_lbGetData').click()
 
             csv_data = self.driver.find_element(By.TAG_NAME, 'body').text
-
             if "Erreur" in csv_data:
                 print("Archived data not yet available for this month.")
                 return pd.DataFrame()
