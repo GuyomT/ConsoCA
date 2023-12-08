@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
 from webdriver_manager.chrome import ChromeDriverManager
 import sys
 import os
@@ -11,6 +12,7 @@ from io import StringIO
 from InitDatabase import EnergyData, engine
 from sqlalchemy.orm import sessionmaker
 from selenium.webdriver.chrome.options import Options
+
 
 class ArchivedNetworkData:
 
@@ -62,8 +64,10 @@ class ArchivedNetworkData:
         try:
             self.driver.get("https://tso.nbpower.com/Public/fr/system_information_archive.aspx")
 
-            self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlMonth').send_keys(str(month))
-            self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlYear').send_keys(str(year))
+            select_element_month = Select(self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlMonth'))
+            select_element_month.select_by_value(str(month))
+            select_element_year = Select(self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlYear'))
+            select_element_year.select_by_value(str(year))
             self.driver.find_element(By.ID, 'ctl00_cphMainContent_lbGetData').click()
 
             csv_data = self.driver.find_element(By.TAG_NAME, 'body').text
@@ -158,9 +162,3 @@ class ArchivedNetworkData:
             print(f"An error occurred: {e}")
         finally:
             session.close()
-
-
-# archive = ArchivedNetworkData()
-# archive.get_all_data()
-# archive.insert_data_into_database()
-# archive.quit_driver()

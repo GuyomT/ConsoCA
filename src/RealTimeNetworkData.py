@@ -57,7 +57,3 @@ class RealTimeNetworkData:
 
     def display_data(self):
         pass
-
-# donnees = RealTimeNetworkData()
-# donnees.get_data()
-# donnees.process_and_display_data()
