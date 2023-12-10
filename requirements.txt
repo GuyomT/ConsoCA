@@ -1,6 +1,7 @@
 bs4
 requests
 selenium
+webdriver_manager
 SQLAlchemy
 pymysql
 numpy
