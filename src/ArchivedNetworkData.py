@@ -20,7 +20,8 @@ class ArchivedNetworkData:
         """
         ArchivedNetworkData constructor
         """
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+        self.driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()))
         options = Options()
         options.add_argument('--headless')
         options.add_argument('--disable-gpu')
@@ -37,7 +38,8 @@ class ArchivedNetworkData:
             self.driver.get(self.url)
             return int(self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlYear').find_elements(By.TAG_NAME, 'option')[0].text)
         except Exception as e:
-            print("An error occurred while retrieving the max year from ArchivedNetworkData")
+            print(
+                "An error occurred while retrieving the max year from ArchivedNetworkData")
             print(e)
             sys.exit(1)
 
@@ -50,7 +52,8 @@ class ArchivedNetworkData:
             self.driver.get(self.url)
             return int(self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlYear').find_elements(By.TAG_NAME, 'option')[-1].text)
         except Exception as e:
-            print("An error occurred while retrieving the min year from ArchivedNetworkData")
+            print(
+                "An error occurred while retrieving the min year from ArchivedNetworkData")
             print(e)
             sys.exit(1)
 
@@ -62,13 +65,17 @@ class ArchivedNetworkData:
         @return: DataFrame containing the data
         """
         try:
-            self.driver.get("https://tso.nbpower.com/Public/fr/system_information_archive.aspx")
+            self.driver.get(
+                "https://tso.nbpower.com/Public/fr/system_information_archive.aspx")
 
-            select_element_month = Select(self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlMonth'))
+            select_element_month = Select(self.driver.find_element(
+                By.NAME, 'ctl00$cphMainContent$ddlMonth'))
             select_element_month.select_by_value(str(month))
-            select_element_year = Select(self.driver.find_element(By.NAME, 'ctl00$cphMainContent$ddlYear'))
+            select_element_year = Select(self.driver.find_element(
+                By.NAME, 'ctl00$cphMainContent$ddlYear'))
             select_element_year.select_by_value(str(year))
-            self.driver.find_element(By.ID, 'ctl00_cphMainContent_lbGetData').click()
+            self.driver.find_element(
+                By.ID, 'ctl00_cphMainContent_lbGetData').click()
 
             csv_data = self.driver.find_element(By.TAG_NAME, 'body').text
             if "Erreur" in csv_data:
@@ -88,7 +95,8 @@ class ArchivedNetworkData:
         """
         session = self.Session()
         try:
-            result = session.query(EnergyData.heure).filter(EnergyData.heure.between(f'{year}-01-01', f'{year}-12-31')).first()
+            result = session.query(EnergyData.heure).filter(
+                EnergyData.heure.between(f'{year}-01-01', f'{year}-12-31')).first()
             return result is not None
         except Exception as e:
             print(f"Database query error: {e}")
@@ -105,7 +113,8 @@ class ArchivedNetworkData:
             max_year = self.get_max_year()
             for year in range(min_year, max_year + 1):
                 if os.path.exists(f'archive_{year}.csv'):
-                    print(f"Data for year {year} already exists in csv. Skipping.")
+                    print(
+                        f"Data for year {year} already exists in csv. Skipping.")
                     continue
                 yearly_data = pd.DataFrame()
                 for month in range(1, 13):

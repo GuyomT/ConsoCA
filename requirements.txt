@@ -1,6 +1,8 @@
+bs4
+requests
 selenium
 SQLAlchemy
 pymysql
+numpy
 pandas
 matplotlib
-cryptography

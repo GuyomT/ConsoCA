@@ -1,7 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
-import matplotlib.pyplot as plt
 from InitDatabase import EnergyData, engine
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -9,16 +7,12 @@ class RealTimeNetworkData:
     def __init__(self):
         self.url = "https://tso.nbpower.com/Public/fr/SystemInformation_realtime.asp"
         self.data = None
-        self.data_df = pd.DataFrame()
         self.Session = sessionmaker(bind=engine)
 
     def get_data(self):
         response = requests.get(self.url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.content, 'html.parser')
-
-            # date = soup.find('i').get_text().strip()
-            # print(date)
 
             rows = soup.find_all('tr')
             titles = [b.get_text().strip() for b in rows[4].find_all('b')]
@@ -54,6 +48,3 @@ class RealTimeNetworkData:
             print(f"An error occurred: {e}")
         finally:
             session.close()
-
-    def display_data(self):
-        pass
