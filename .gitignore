@@ -157,6 +157,7 @@ cython_debug/
 
 # Config
 config.ini
+secret.toml
 
 # tmp
 *.tmp

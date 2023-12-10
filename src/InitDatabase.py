@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from configparser import ConfigParser
+import streamlit as st
 
 Base = declarative_base()
 
@@ -17,12 +18,15 @@ class EnergyData(Base):
     ipe = Column(Float)
 
 
-config = ConfigParser()
-config.read('config.ini')
-
-db_user = config.get('database', 'user')
-db_pass = config.get('database', 'password')
+db_user = st.secrets["connections.mydb"]["username"]
+db_pass = st.secrets["connections.mydb"]["password"]
 
 engine = create_engine(f'mysql+pymysql://{db_user}:{db_pass}@localhost/consoca')
+
+# conn = st.connection("mydb", type="sql", autocommit=True)
+# df = conn.query("select * from consoca.energy_data")
+# st.dataframe(df)
+# print(df)
+# conn.connect()
 
 Base.metadata.create_all(engine)
