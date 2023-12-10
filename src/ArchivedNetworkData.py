@@ -12,6 +12,7 @@ from io import StringIO
 from InitDatabase import EnergyData, engine
 from sqlalchemy.orm import sessionmaker
 from selenium.webdriver.chrome.options import Options
+import streamlit as st
 
 
 class ArchivedNetworkData:
@@ -20,14 +21,15 @@ class ArchivedNetworkData:
         """
         ArchivedNetworkData constructor
         """
-        self.driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()))
         options = Options()
         options.add_argument('--headless')
         options.add_argument('--disable-gpu')
         options.add_argument('--log-level=3')
+        self.driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()), options=options)
         self.url: str = "https://tso.nbpower.com/Public/fr/system_information_archive.aspx"
         self.Session = sessionmaker(bind=engine)
+        st.code(self.driver.page_source)
 
     def get_max_year(self):
         """

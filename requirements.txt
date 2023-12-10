@@ -6,3 +6,4 @@ pymysql
 numpy
 pandas
 matplotlib
+streamlit
