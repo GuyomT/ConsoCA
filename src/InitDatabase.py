@@ -19,14 +19,12 @@ class EnergyData(Base):
 db_user = st.secrets["username"]
 db_pass = st.secrets["password"]
 
-engine = create_engine(f'mysql+pymysql://{db_user}:{db_pass}@localhost/consoca')
+# engine = create_engine(f'mysql+pymysql://{db_user}:{db_pass}@localhost/consoca')
 
-Base.metadata.create_all(engine)
+# Base.metadata.create_all(engine)
 
-# conn = st.connection("mydb", type="sql", autocommit=True)
-# print(conn.session)
-# print(sessionmaker(bind=engine))
-# df = conn.query("select * from consoca.energy_data")
-# st.dataframe(df)
-# print(df)
-# conn.connect()
+conn = st.connection("mydb", type="sql", autocommit=True)
+print(conn.session)
+df = conn.query("select * from consoca.energy_data")
+st.dataframe(df)
+print(df)
