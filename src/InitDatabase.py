@@ -1,8 +1,6 @@
 from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-from configparser import ConfigParser
 import streamlit as st
-from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
