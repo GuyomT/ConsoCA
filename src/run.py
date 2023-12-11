@@ -1,6 +1,7 @@
 from EnergyDataHarvest import EnergyDataHarvest
 from sqlalchemy.orm import sessionmaker
 from InitDatabase import EnergyData, engine
+import streamlit as st
 
 
 def getLastRecord():
@@ -21,6 +22,11 @@ def getLastRecord():
 
 if __name__ == '__main__':
     energy_data = EnergyDataHarvest()
+    conn = st.connection("mydb", type="sql", autocommit=True)
+    print(conn.session)
+    df = conn.query("select * from consoca.energy_data")
+    st.dataframe(df)
+    print(df)
     energy_data.getArchivedData()
     # energy_data.getRealTimeData()
     # energy_data.plotDataFromPeriod('2021-01-01', '2021-01-02', 'quebec')
