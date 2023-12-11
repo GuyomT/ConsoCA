@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from configparser import ConfigParser
 import streamlit as st
+from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
@@ -17,16 +18,17 @@ class EnergyData(Base):
     nouvelle_ecosse = Column(Float)
     ipe = Column(Float)
 
-
-db_user = st.secrets["connections.mydb"]["username"]
-db_pass = st.secrets["connections.mydb"]["password"]
+db_user = st.secrets["username"]
+db_pass = st.secrets["password"]
 
 engine = create_engine(f'mysql+pymysql://{db_user}:{db_pass}@localhost/consoca')
 
+Base.metadata.create_all(engine)
+
 # conn = st.connection("mydb", type="sql", autocommit=True)
+# print(conn.session)
+# print(sessionmaker(bind=engine))
 # df = conn.query("select * from consoca.energy_data")
 # st.dataframe(df)
 # print(df)
 # conn.connect()
-
-Base.metadata.create_all(engine)
