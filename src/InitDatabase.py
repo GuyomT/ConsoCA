@@ -22,5 +22,3 @@ db_pass = st.secrets["password"]
 engine = create_engine(f'mysql+pymysql://{db_user}:{db_pass}@localhost/consoca')
 
 Base.metadata.create_all(engine)
-
-

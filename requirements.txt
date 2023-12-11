@@ -7,5 +7,6 @@ pymysql
 numpy
 pandas
 matplotlib
-streamlit
 cryptography
+streamlit
+streamlit_autorefresh
