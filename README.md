@@ -9,7 +9,7 @@ CREATE DATABASE consoca;
 
 Vous pouvez alors installer les dépendances du projet et lancer l'application avec streamlit.
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
@@ -28,5 +28,5 @@ password = "password"
 ```
 
 ```bash
-streamlit ./src/run.py
+streamlit run ./src/run.py
 ```

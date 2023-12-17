@@ -3,6 +3,7 @@ import pandas as pd
 from InitDatabase import EnergyData, engine
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
+import streamlit as st
 
 
 class PlotData:
@@ -40,6 +41,7 @@ class PlotData:
             plt.ylabel(data_column)
             plt.legend()
             plt.show()
+            st.pyplot(plt)
         else:
             print("Aucune donnée à afficher.")
 
@@ -58,6 +60,7 @@ class PlotData:
             plt.xlabel('Temps')
             plt.ylabel(data_column)
             plt.show()
+            st.pyplot(plt)
         else:
             print("Aucune donnée à afficher.")
 
@@ -79,6 +82,7 @@ class PlotData:
             plt.ylabel(data_column)
             plt.legend()
             plt.show()
+            st.pyplot(plt)
         else:
             print("Aucune donnée à afficher pour l'une des années.")
 

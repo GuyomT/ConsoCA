@@ -1,3 +1,4 @@
+from datetime import datetime
 from EnergyDataHarvest import EnergyDataHarvest
 from sqlalchemy.orm import sessionmaker
 from InitDatabase import EnergyData, engine
@@ -29,9 +30,11 @@ if __name__ == '__main__':
     if conn.query("select * from consoca.energy_data").empty:
         energy_data.getArchivedData()
     energy_data.getRealTimeData()
-    # energy_data.plotDataFromPeriod('2021-01-01', '2021-01-02', 'quebec')
-    # energy_data.plotBarChartFromPeriod('2021-01-01', '2021-01-02', 'quebec')
-    # energy_data.plotComparisonBetweenYears('2020', '2021', 'quebec')
+    energy_data.plotDataFromPeriod(datetime(2021, 1, 1),
+                     datetime(2021, 3, 31), 'quebec')
+    energy_data.plotBarChartFromPeriod(datetime(2021, 1, 1),
+                          datetime(2021, 3, 31), 'quebec')
+    energy_data.plotComparisonBetweenYears(2020, 2021, 'quebec')
 
     df = conn.query("select * from consoca.energy_data")
     st.dataframe(df)
