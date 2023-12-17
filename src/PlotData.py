@@ -65,6 +65,12 @@ class PlotData:
             print("Aucune donnée à afficher.")
 
     def plot_comparison_between_years(self, year1, year2, data_column):
+        """
+        Plot a chart comparing data from two different years.
+        @param year1: int
+        @param year2: int
+        @param data_column: string
+        """
         data_year1 = self.get_data_from_db(datetime(year1, 1, 1), datetime(year1, 12, 31))
         data_year2 = self.get_data_from_db(datetime(year2, 1, 1), datetime(year2, 12, 31))
 
@@ -85,12 +91,3 @@ class PlotData:
             st.pyplot(plt)
         else:
             print("Aucune donnée à afficher pour l'une des années.")
-
-
-
-# visualizer = PlotData()
-# visualizer.plot_data_from_period(datetime(2021, 1, 1),
-#                      datetime(2021, 3, 31), 'quebec')
-# visualizer.plot_bar_chart_from_period(datetime(2021, 1, 1),
-#                           datetime(2021, 3, 31), 'quebec')
-# visualizer.plot_comparison_between_years(2020, 2021, 'quebec')
